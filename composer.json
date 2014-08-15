@@ -1,0 +1,25 @@
+{
+	"name": "idealistsoft/framework-admin",
+	"version": "1.0",
+	"description": "Admin module for Idealist Framework",
+	"type": "library",
+	"keywords": ["idealist","framework","admin"],
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "jaredtking",
+			"email": "j@jaredtking.com",
+			"homepage": "http://jaredtking.com"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/idealistsoft/framework-admin/issues",
+		"source": "https://github.com/idealistsoft/framework-admin"
+	},
+    "autoload": {
+        "psr-0": {"\\": "src/"}
+    },
+	"require": {
+		"php": ">=5.4.0"
+	}
+}

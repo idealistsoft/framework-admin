@@ -1,6 +1,11 @@
 framework-admin
 ===============
 
+[![Build Status](https://travis-ci.org/idealistsoft/framework-admin.png?branch=master)](https://travis-ci.org/idealistsoft/framework-admin) [![Coverage Status](https://coveralls.io/repos/idealistsoft/framework-admin/badge.png)](https://coveralls.io/r/idealistsoft/framework-admin)
+
+[![Latest Stable Version](https://poser.pugx.org/idealistsoft/framework-admin/v/stable.png)](https://packagist.org/packages/idealistsoft/framework-admin)
+[![Total Downloads](https://poser.pugx.org/idealistsoft/framework-admin/downloads.png)](https://packagist.org/packages/idealistsoft/framework-admin)
+
 Admin module for Idealist Framework
 
 ## Installation

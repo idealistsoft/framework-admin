@@ -10,7 +10,9 @@ Admin module for Idealist Framework
 
 ## Installation
 
-Simply add the composer package in the require section of your app's `composer.json` and run `composer update`
+1. Add the composer package in the require section of your app's `composer.json` and run `composer update`
+
+2. Copy the CSS and JS files into the `public` directory. If you use the minified versions, be sure they are renamed to `css/admin.css` and `js/admin.js`.
 
 ## Admin properties for models
 	

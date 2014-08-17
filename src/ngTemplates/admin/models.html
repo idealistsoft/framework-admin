@@ -1,0 +1,254 @@
+<div class="errors">
+	<p class="alert alert-danger" ng-repeat="error in errors">{{error}}</p>
+</div>
+
+<div class="filter-bar hidden-xs">
+	<div class="row">
+		<div class="col-md-2">
+			<div class="input-group">
+				<span class="input-group-addon">
+					<span class="glyphicon glyphicon-search"></span>
+				</span>
+				<input class="form-control" id="prependedInput" type="text" placeholder="Search" ng-model="query" ng-change="loadModels()" />
+			</div>
+		</div>
+		<div class="col-md-1">
+			<a href="#" class="btn btn-link btn-block" ng-click="showModelProperties=!showModelProperties" eat-click>
+				Properties
+				<span class="glyphicon" ng-class="{'glyphicon-chevron-right':!showModelProperties,'glyphicon-chevron-down':showModelProperties}"></span>
+			</a>
+		</div>
+		<div class="col-md-1">
+			<select ng-model="limit" ng-change="loadModels()" class="form-control">
+				<option value="10">10</option>
+				<option value="25">25</option>
+				<option value="50">50</option>
+				<option value="100">100</option>
+			</select>
+		</div>
+		<div class="col-md-2" ng-show="modelInfo.permissions.create">
+			<a href="#/new" class="btn btn-success btn-block">
+				<span class="glyphicon glyphicon-plus glyphicon-white"></span> {{modelInfo.proper_name}}
+			</a>
+		</div>
+	</div>
+</div>
+
+<div class="filter-bar visible-xs">
+	<div class="row">
+		<div class="col-xs-8">
+			<div class="input-group">
+				<span class="input-group-addon">
+					<span class="glyphicon glyphicon-search"></span>
+				</span>
+				<input class="form-control" id="prependedInput" type="text" placeholder="Search" ng-model="query" ng-change="loadModels()" />
+			</div>
+		</div>
+		<div class="col-xs-4">
+			<select ng-model="limit" ng-change="loadModels()" class="form-control">
+				<option value="10">10</option>
+				<option value="25">25</option>
+				<option value="50">50</option>
+				<option value="100">100</option>
+			</select>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-6">
+			<a href="#" class="btn btn-link btn-block" ng-click="showModelProperties=!showModelProperties" eat-click>
+				Properties
+				<span class="glyphicon" ng-class="{'glyphicon-chevron-right':!showModelProperties,'glyphicon-chevron-down':showModelProperties}"></span>
+			</a>
+		</div>
+		<div class="col-xs-6" ng-show="modelInfo.permissions.create">
+			<a href="#/new" class="btn btn-success btn-block">
+				<span class="glyphicon glyphicon-plus glyphicon-white"></span> {{modelInfo.proper_name}}
+			</a>
+		</div>
+	</div>
+</div>
+
+<div class="properties-holder" ng-class="{hidden:!showModelProperties}">
+	<div class="row">
+		<div class="col-sm-6">
+			<h4>Visible Properties</h4>
+			<table class="table">
+				<tr ng-repeat="property in modelInfo.properties" class="property" ng-show="visibleProperties[property.name]">
+					<td>
+						<input type="checkbox" ng-model="visibleProperties[property.name]" ng-change="toggleVisibility(property)" />
+					</td>
+					<td>
+						<div class="row">
+							<div class="col-sm-5">
+								{{property.title}}
+							</div>
+							<div class="col-sm-1">
+								<button class="btn-link glyphicon glyphicon-white" ng-class="{'glyphicon-sort':sortDirection(property)==0,'glyphicon-sort-by-attributes':sortDirection(property)==1,'glyphicon-sort-by-attributes-alt':sortDirection(property)==-1}" ng-click="toggleSort(property)" ng-hide="property.admin_no_sort">
+								</button>
+							</div>
+							<div class="col-sm-6">
+								<button class="btn-link" ng-hide="hasFilter[property.name]" ng-click="showFilter(property)">
+									<span class="glyphicon glyphicon-filter glyphicon-white"></i>
+								</button>
+								<div class="input-group" ng-show="hasFilter[property.name]">
+									<input class="form-control input-sm" type="text" placeholder="Filter..." ng-model="filter[property.name]" />
+									<span class="input-group-btn">
+										<button class="btn btn-success btn-sm" type="button" ng-click="loadModels()">
+											<i class="glyphicon glyphicon-ok glyphicon-white"></i>
+										</button>
+										<button class="btn btn-danger btn-sm" type="button" ng-click="hideFilter(property)">
+											<i class="glyphicon glyphicon-remove glyphicon-white"></i>
+										</button>								
+									</span>
+								</div>
+							</div>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="col-sm-6">
+			<h4>Hidden Properties</h4>
+			<table class="table">
+				<tr ng-repeat="property in modelInfo.properties" class="property" ng-hide="visibleProperties[property.name]">
+					<td>
+						<input type="checkbox" ng-model="visibleProperties[property.name]" ng-change="toggleVisibility(property)" />
+					</td>
+					<td>
+						{{property.title}}
+					</td>
+					<td>
+						<button class="btn-link glyphicon glyphicon-white" ng-class="{'glyphicon-sort':sortDirection(property)==0,'glyphicon-sort-by-attributes':sortDirection(property)==1,'glyphicon-sort-by-attributes-alt':sortDirection(property)==-1}" ng-click="toggleSort(property)">
+						</button>
+					</td>
+					<td>
+						<button class="btn-link" ng-hide="hasFilter[property.name]" ng-click="showFilter(property)">
+							<span class="glyphicon glyphicon-filter glyphicon-white"></i>
+						</button>
+						<div class="input-group" ng-show="hasFilter[property.name]">
+							<input class="form-control input-sm" type="text" placeholder="Filter..." ng-model="filter[property.name]" />
+							<span class="input-group-btn">
+								<button class="btn btn-success btn-sm" type="button" ng-click="loadModels()">
+									<i class="glyphicon glyphicon-ok glyphicon-white"></i>
+								</button>
+								<button class="btn btn-danger btn-sm" type="button" ng-click="hideFilter(property)">
+									<i class="glyphicon glyphicon-remove glyphicon-white"></i>
+								</button>								
+							</span>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+
+<div ng-hide="noModels()">
+	<div class="models-holder hidden-xs">
+		<table class="table table-striped" id="models-table">
+			<thead>
+				<tr class="title-bar">
+					<th></th>
+					<th></th>
+					<th ng-repeat="property in modelInfo.visibleProperties">
+						{{property.title}}
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="model in models">
+					<td class="controls nowrap">
+						<div class="btn-group" ng-show="model.id">
+							<a href="#/{{model.id}}" class="btn btn-default">
+								<span class="glyphicon glyphicon-eye-open"></span>
+							</a>
+							<a href="#/{{model.id}}/edit" class="btn btn-success" ng-show="modelInfo.permissions.edit">
+								<i class="glyphicon glyphicon-pencil"></i>
+							</a>
+							<a href="#" class="btn btn-danger" ng-click="deleteModelAsk(model)" ng-show="modelInfo.permissions.delete" eat-click>
+								<i class="glyphicon glyphicon-remove"></i>
+							</a>
+						</div>
+					</td>
+					<td class="title nowrap">
+						# {{model.id}}
+					</td>
+					<td ng-repeat="property in modelInfo.visibleProperties" ng-bind-html="model|modelValue:modelInfo.properties:property:true" ng-class="{nowrap:property.admin_nowrap}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="models-holder visible-xs">
+		<div ng-repeat="model in models" class="model">
+			<div class="btn-toolbar pull-right" ng-show="model.id">
+				<a href="#/{{model.id}}" class="btn btn-default">
+					<span class="glyphicon glyphicon-eye-open"></span>
+				</a>
+				<a href="#/{{model.id}}/edit" class="btn btn-success" ng-show="modelInfo.permissions.edit">
+					<i class="glyphicon glyphicon-pencil"></i>
+				</a>
+				<a href="#" class="btn btn-danger" ng-click="deleteModelAsk(model)" ng-show="modelInfo.permissions.delete" eat-click>
+					<i class="glyphicon glyphicon-remove"></i>
+				</a>
+			</div>
+
+			<div class="title">
+				# {{model.id}}
+			</div>
+
+			<div class="property" ng-repeat="property in modelInfo.visibleProperties">
+				<table>
+					<tr>
+						<td>
+							{{property.title}}
+						</td>
+						<td ng-bind-html="model|modelValue:modelInfo.properties:property:true"></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+		
+	<ul class="pagination pull-right" ng-show="page_count>1">
+		<li ng-hide="page_count==1" ng-class="{disabled:page==1}">
+			<a href="#" ng-click="goToPage(1)" eat-click>
+				&laquo;
+			</a>
+		</li>
+	    <li ng-repeat="p in currentPages(5)" ng-class="{active:page==p}">
+	    	<a href="#" ng-click="goToPage(p)" eat-click>{{p}}</a>
+	    </li>
+		<li ng-hide="page_count==1" ng-class="{disabled:page==page_count}">
+			<a href="#" ng-click="goToPage(page_count)" eat-click>
+				&raquo;
+			</a>
+		</li>
+	</ul>
+	
+	<p ng-show="models.length>0">
+		<br/>
+		<strong>{{total_count}} {{modelInfo.proper_name_plural}}</strong><br/>
+		<span ng-show="models.length>0">Showing <em>{{(page-1)*limit+1}}-{{((page-1)*limit)+models.length}}</em> of <em>{{filtered_count}}</em> found</span>
+		<span ng-show="models.length==0"><em>None Found</em></span>
+	</p>
+</div>
+<div class="no-results" ng-show="models.length==0&&!loading">
+	Unable to find any {{modelInfo.proper_name_plural}}<span ng-show="query.length>0"> matching <strong>{{query}}</strong></span>.
+</div>
+<div class="loading" ng-show="loading">
+	<img src="/img/ajax-loader.gif" />
+</div>
+
+<script type="text/ng-template" id="deleteModalAsk.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Are you sure?</h3>
+    </div>
+    <div class="modal-body">
+		<p>Are you sure you want to delete this {{modelInfo.proper_name}}?</p>
+    </div>
+    <div class="modal-footer">
+		<button class="btn btn-default cancel" ng-click="cancel()">No</button>
+		<button class="btn btn-danger" ng-click="ok()">Yes</button>
+    </div>
+</script>

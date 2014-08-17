@@ -1,0 +1,11 @@
+{
+  "name": "framework-admin",
+  "devDependencies": {
+    "grunt-cli": "latest",
+    "grunt-contrib-concat": "latest",
+    "grunt-contrib-uglify": "latest",
+    "grunt-contrib-less": "latest",
+    "grunt-contrib-cssmin": "latest",
+    "grunt-angular-templates": "latest"
+  }
+}

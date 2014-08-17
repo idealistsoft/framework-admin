@@ -2,7 +2,7 @@ module.exports = function(grunt) {
   
   grunt.initConfig({
     ngtemplates: {
-      app: {
+      models: {
         cwd: "src/",
         src: "ngTemplates/**/*.html",
         dest: "templates.js",

@@ -24,7 +24,7 @@
  
 if (typeof angular != 'undefined') {
 	
-	var app = angular.module('models', ['ngResource','ui.bootstrap','ui.date']);
+	var app = angular.module('models', ['ngResource','ngRoute','ngSanitize','ui.bootstrap','ui.date']);
 	
 	app.factory('Model', ['$resource', function ($resource) {
 		var Model = $resource(

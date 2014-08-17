@@ -1,4 +1,4 @@
-{extends file="$moduleViewsDir/parent.tpl"}
+{extends file="$adminViewsDir/parent.tpl"}
 {block name=header}
 <script type="text/javascript">
 	{if isset($modelJSON)}var modelInfo = {$modelJSON};{/if}
@@ -7,14 +7,14 @@
 {/block}
 {block name=main}
 
-	<ul class="nav nav-header">
+	<ul class="nav nav-tabs">
 		{foreach from=$models item=model}
 			<li class="{if $model.model == $modelInfo.model}active{/if}">
 				<a href="/admin/{$moduleName}/{$model.model}#/">{$model.proper_name_plural}</a>
 			</li>
 		{/foreach}
 	</ul>
-	<hr/>
+	<br/>
 
 	{block name=content}{/block}
 	

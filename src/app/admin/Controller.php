@@ -178,7 +178,8 @@ class Controller
 			if( !class_exists( $controller ) )
 				continue;
 			
-			if( property_exists( $controller, 'scaffoldAdmin' ) || property_exists( $controller, 'hasAdminView' ) )
+			if( property_exists( $controller, 'scaffoldAdmin' ) ||
+				property_exists( $controller, 'hasAdminView' ) )
 			{
 				$moduleInfo = [
 					'name' => $module,

@@ -37,7 +37,7 @@ class Controller
 
 	function index( $req, $res )
 	{
-		$res->redirect( '/admin/' . $this->app[ 'config' ]->get( 'modules.default-admin' ) );
+		$res->redirect( '/admin/' . $this->app[ 'config' ]->get( 'admin.index' ) );
 	}
 
 	function moduleIndex( $req, $res )

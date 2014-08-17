@@ -145,7 +145,7 @@ class Controller
 		$properties = $controller::$properties;
 				
 		// check if automatic admin generation enabled
-		if( !Util::array_value( $properties, 'scaffoldAdmin' ) )
+		if( !property_exists( $controller, 'scaffoldAdmin' ) )
 			return SKIP_ROUTE;
 
 		// html only

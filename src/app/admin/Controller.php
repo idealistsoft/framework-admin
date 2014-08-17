@@ -182,7 +182,7 @@ class Controller
 					'title' => Inflector::titleize( $module ) ];
 
 				if( property_exists( $controller, 'properties' ) )
-					$moduleInfo = array_replace( $moduleInfo, $controller::$properties )
+					$moduleInfo = array_replace( $moduleInfo, $controller::$properties );
 
 				$return[] = $moduleInfo;
 			}

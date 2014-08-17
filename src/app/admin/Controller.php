@@ -28,10 +28,12 @@ class Controller
 	];
 
 	private $app;
+	private $adminViewsDir;
 
 	function __construct( App $app )
 	{
 		$this->app = $app;
+		$this->adminViewsDir = __DIR__ . '/views/';
 	}
 
 	function middleware( $req, $res )
@@ -43,9 +45,10 @@ class Controller
 			$adminViewParams = [
 				'modulesWithAdmin' => $this->adminModules(),
 				'selectedModule' => $module,
-				'title' => Inflector::titleize( $module ) ];
+				'title' => Inflector::titleize( $module ),
+				'adminViewsDir' => $this->adminViewsDir ];
 			
-			$this[ 'view_engine' ]->assignData( $adminViewParams );
+			$this->app[ 'view_engine' ]->assignData( $adminViewParams );
 		}
 	}
 
@@ -150,7 +153,7 @@ class Controller
 		$params[ 'modelJSON' ] = json_encode( $modelInfo );
 		$params[ 'ngApp' ] = 'models';
 		
-		$res->render( 'model', $params );
+		$res->render( $this->adminViewsDir . 'model', $params );
 	}
 
 	/////////////////////////
@@ -164,7 +167,7 @@ class Controller
 	 *
 	 * @return array admin-enabled modules
 	 */
-	private function adminModules( array $modules )
+	private function adminModules()
 	{
 		$return = [];
 		

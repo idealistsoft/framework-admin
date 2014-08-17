@@ -167,17 +167,11 @@ body > .modal {
   opacity: .5;
 }
 @media (max-width: 767px) {
-  .subnavbar {
-    margin: 50px 0 0;
-  }
   #main {
     margin: 0;
   }
 }
 @media (min-width: 768px) {
-  body {
-    padding-top: 50px;
-  }
   .subnavbar {
     position: fixed;
     margin: 0;

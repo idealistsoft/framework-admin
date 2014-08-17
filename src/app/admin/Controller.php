@@ -15,7 +15,6 @@ use infuse\Inflector;
 use infuse\Util;
 
 use App;
-use app\admin\libs\Admin;
 
 class Controller
 {
@@ -33,6 +32,21 @@ class Controller
 	function __construct( App $app )
 	{
 		$this->app = $app;
+	}
+
+	function middleware( $req, $res )
+	{
+		if( $req->paths( 0 ) == 'admin' )
+		{
+			// inject variables useful for admin views
+			$module = $req->paths( 1 );
+			$adminViewParams = [
+				'modulesWithAdmin' => $this->adminModules(),
+				'selectedModule' => $module,
+				'title' => Inflector::titleize( $module ) ];
+			
+			$this[ 'view_engine' ]->assignData( $adminViewParams );
+		}
 	}
 
 	function index( $req, $res )
@@ -76,7 +90,10 @@ class Controller
 			return $controller;
 
 		// fetch some basic parameters we want to pass to the view
-		$params = $this->getViewParams( $req->params( 'module' ), $controller );
+		$params = [
+			'moduleName' => $this->name( $controller ),
+			'models' => $this->models( $controller )
+		];
 
 		// which model are we talking about?
 		$model = $this->fetchModelInfo( $req->params( 'module' ), $req->params( 'model' ) );
@@ -136,6 +153,44 @@ class Controller
 		$res->render( 'model', $params );
 	}
 
+	/////////////////////////
+	// PRIVATE METHODS
+	/////////////////////////
+
+	/**
+	 * Returns a list of modules with admin sections
+	 *
+	 * @param array $modules input modules
+	 *
+	 * @return array admin-enabled modules
+	 */
+	private function adminModules( array $modules )
+	{
+		$return = [];
+		
+		foreach( $this->app[ 'config' ]->get( 'modules.all' ) as $module )
+		{
+			$controller = '\\app\\' . $module . '\\Controller';
+
+			if( !class_exists( $controller ) )
+				continue;
+			
+			if( property_exists( $controller, 'scaffoldAdmin' ) || property_exists( $controller, 'hasAdminView' ) )
+			{
+				$moduleInfo = [
+					'name' => $module,
+					'title' => Inflector::titleize( $module ) ];
+
+				if( property_exists( $controller, 'properties' ) )
+					$moduleInfo = array_replace( $moduleInfo, $controller::$properties )
+
+				$return[] = $moduleInfo;
+			}
+		}
+
+		return $return;	
+	}
+
 	private function getController( $req, $res )
 	{
 		// instantiate the controller
@@ -157,23 +212,6 @@ class Controller
 			return $res->setCode( 401 );
 
 		return $controllerObj;		
-	}
-
-	private function getViewParams( $module, $controller )
-	{
-		$properties = $controller::$properties;
-
-		$models = $this->models( $controller );
-		
-		$params = [
-			'moduleName' => $this->name( $controller ),
-			'models' => $models,
-			'modulesWithAdmin' => Admin::adminModules(),
-			'selectedModule' => $module,
-			'title' => Inflector::titleize( $module ),
-		];
-
-		return $params;		
 	}
 
 	/** 

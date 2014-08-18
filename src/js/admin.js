@@ -85,16 +85,41 @@ if (typeof angular != 'undefined') {
 	        }
 	    };
 	});
+
+	app.directive('jsonEditor', ['$parse', function($parse) {
+	    return {
+	        restrict: 'A',
+	        require: 'ngModel',
+	        link: function (scope, element, attrs, ngModel) {
+	        	var model = $parse(attrs.ngModel);
+
+	        	var opt = {
+	        		change: function(data) {
+	        			scope.$apply(function() {
+	        				ngModel.$setViewValue(data);
+	        			});
+	        		}
+	        	};
+	       		
+	       		scope.$watch(model, function (data) {
+	       			if (typeof data != 'object')
+	       				return;
+
+	       			$(element).jsonEditor(data, opt);
+	       		});
+	        }
+	    };
+	}]);
 	
 	/* Filters */
 	
 	app.filter('modelValue', function() {
 		return function (model, properties, property, truncate) {
-					
-			// apply filter
-			if (typeof(property.filter) == 'string')
+			
+			// apply admin html
+			if (typeof(property.admin_html) == 'string')
 			{
-				value = property.filter;
+				value = property.admin_html;
 				
 				for (var i in properties)
 				{
@@ -109,23 +134,19 @@ if (typeof angular != 'undefined') {
 				
 				return value;
 			}
-			// no filter
+			// no admin html
 			else
 				return parseModelValue(model, property, truncate);
 		};
 	});
 	
-	var ModelCntl = ['$scope', '$routeParams', '$location', 'Model',
-		function($scope, $routeParams, $location, Model) {
+	var ModelCntl = ['$scope', '$routeParams', '$location', '$modal', 'Model',
+		function($scope, $routeParams, $location, $modal, Model) {
 			
 			$scope.module = module;
 			$scope.modelInfo = modelInfo;
 			$scope.page = 1;
 			$scope.limit = 10;	
-			$scope.dialogOptions = {
-				backdropFade: true,
-				dialogFade:true
-			};
 			$scope.deleteModel = false;
 			$scope.models = [];
 			$scope.loading = false;
@@ -134,8 +155,24 @@ if (typeof angular != 'undefined') {
 			$scope.sortMap = {'1':'asc','-1':'desc'};
 			$scope.filter = {};
 			$scope.hasFilter = {};
-			
-			$scope.loadModels = function() {
+			$scope.visibleProperties = {};
+			// O(N^2)...
+			for (var i in $scope.modelInfo.properties) {
+				var property = $scope.modelInfo.properties[i].name;
+				var found = false;
+				for (var j in $scope.modelInfo.visibleProperties) {
+					if ($scope.modelInfo.visibleProperties[j].name == property) {
+						found = true;
+						break;
+					}
+				}
+				$scope.visibleProperties[property] = found;
+			}
+
+			$scope.loadModels = function(keepPage) {
+				if (!keepPage)
+					$scope.page = 1;
+
 				var start = ($scope.page - 1) * $scope.limit;
 			
 				$scope.loading = true;
@@ -194,6 +231,19 @@ if (typeof angular != 'undefined') {
 
 				return true;
 			};
+
+			$scope.toggleVisibility = function(property) {
+				if ($scope.visibleProperties[property.name]) {
+					$scope.modelInfo.visibleProperties.push(property);
+				} else {
+					for (var i in $scope.modelInfo.visibleProperties) {
+						if ($scope.modelInfo.visibleProperties[i].name == property.name) {
+							$scope.modelInfo.visibleProperties.splice(i, 1);
+							break;
+						}
+					}
+				}
+			}
 			
 			$scope.sortDirection = function(property) {
 				for (var i in $scope.sort) {
@@ -280,7 +330,7 @@ if (typeof angular != 'undefined') {
 				
 				if ($scope.page != p) {
 					$scope.page = p;
-					$scope.loadModels();
+					$scope.loadModels(true);
 				}
 			};
 			
@@ -310,6 +360,22 @@ if (typeof angular != 'undefined') {
 			
 			$scope.deleteModelAsk = function(model) {
 				$scope.deleteModel = model;
+
+				var modalInstance = $modal.open({
+					controller: DeleteModalCntl,
+					resolve: {
+						modelInfo: function() {
+							return $scope.modelInfo;
+						}
+					},
+					templateUrl: 'deleteModalAsk.html'
+				});
+
+				modalInstance.result.then(
+					$scope.deleteModelConfirm,
+					function() {
+						$scope.deleteModel = false;
+					});
 			};
 			
 			$scope.deleteModelConfirm = function() {
@@ -321,7 +387,7 @@ if (typeof angular != 'undefined') {
 						if ($routeParams.id)
 							$location.path('/');
 						else
-							$scope.loadModels();
+							$scope.loadModels(true);
 					} else if (result.error && result.error instanceof Array) {
 		    			$scope.errors = result.error;
 		    		}
@@ -329,10 +395,6 @@ if (typeof angular != 'undefined') {
 				
 				$scope.deleteModel = false;
 			}
-			
-			$scope.closeDeleteModal = function() {
-				$scope.deleteModel = false;
-			};
 			
 			$scope.saveModel = function() {
 			
@@ -398,9 +460,9 @@ if (typeof angular != 'undefined') {
 						$scope.model[property.name] = (typeof property.default != 'undefined') ? property.default : '';
 						
 						// enums cannot have an empty value, grab first value
-						if (property.type == 'enum' && typeof property.default == 'undefined') {
-							var kyz = Object.keys(property.enum);
-							$scope.model[property.name] = property.enum[kyz[0]];
+						if (property.admin_type == 'enum' && typeof property.default == 'undefined') {
+							var kyz = Object.keys(property.admin_enum);
+							$scope.model[property.name] = property.admin_enum[kyz[0]];
 						}
 					}
 					
@@ -412,6 +474,20 @@ if (typeof angular != 'undefined') {
 					$scope.loadModels();
 				}
 			}
+	}];
+
+	var DeleteModalCntl = ['$scope','$modalInstance','modelInfo',
+		function($scope, $modalInstance, modelInfo) {
+
+		$scope.modelInfo = modelInfo;
+
+		$scope.ok = function() {
+			$modalInstance.close();
+		};
+
+		$scope.cancel = function() {
+			$modalInstance.dismiss('cancel');
+		};
 	}];
 	
 	function nl2br(input) {
@@ -437,32 +513,32 @@ if (typeof angular != 'undefined') {
 		if (value === null)
 			return '<em>null</em>';
 	
-		switch(property.type)
+		switch(property.admin_type)
 		{
-		case 'id':
-		case 'number':		
-		case 'hidden':
-		case 'custom':
 		case 'text':
-		case 'longtext':
+		case 'textarea':
 		break;
-		case 'boolean':
+		case 'checkbox':
 			value = (value > 0) ? 'Yes' : 'No';
 		break;
+		case 'datepicker':
+			if (value != null)
+				value = moment(value).format("M/D/YYYY h:mm a");
+		break;
 		case 'enum':
-			if (property.enum)
+			if (property.admin_enum)
 			{
-				if (property.enum[value])
-					value = property.enum[value];
+				if (property.admin_enum[value])
+					value = property.admin_enum[value];
 				else if (property.default)
-					value = property.enum[property.default];
+					value = property.admin_enum[property.default];
 			}		
 		break;
 		case 'password':
 			return '<em>hidden</em>';
 		break;
-		case 'date':
-			value = moment(value).format("M/D/YYYY h:mm a");
+		case 'json':
+			value = JSON.stringify(value);
 		break;
 		case 'html':
 			return value;
@@ -470,10 +546,21 @@ if (typeof angular != 'undefined') {
 		}
 		
 		// truncation
-		if (truncate && property.truncate && value.length > 40)
+		if (truncate && property.admin_truncate && value.length > 40)
 			value = value.substring(0, 40) + '...';
 		
-		return nl2br(htmlentities(value));
+		// convert new lines to breaks and escape html characters
+		value = nl2br(htmlentities(value));
+
+		// link relationships
+		if (property.relation) {
+			var pieces = property.relation.split('\\');
+			var module = pieces[2];
+			var model = pieces[4];
+			value = '<a href="/admin/' + module + '/' + model + '#/' + value + '">' + value + '</a>';
+		}
+
+		return value;
 	}
 	
 	function massageModelForClient (model, modelInfo) {
@@ -482,18 +569,18 @@ if (typeof angular != 'undefined') {
 			var property = modelInfo.properties[i];
 			var value = model[property.name];
 			
-			switch (property.type)
+			switch (property.admin_type)
 			{
-			case 'date':
+			case 'datepicker':
 				if (value == 0)
-					model[property.name] = new Date();
+					model[property.name] = null;
 				else
 					model[property.name] = moment.unix(value).toDate();
 			break;
 			case 'password':
 				model[property.name] = '';
 			break;
-			case 'boolean':
+			case 'checkbox':
 				model[property.name] = (value > 0) ? true : false;
 			break;
 			}
@@ -529,10 +616,15 @@ if (typeof angular != 'undefined') {
 			var property = properties[i];
 			var value = model[property.name];
 		
-			switch (property.type)
+			switch (property.admin_type)
 			{
-			case 'date':
-				model[property.name] = moment(value).unix();
+			case 'datepicker':
+				if (value != null)
+					model[property.name] = moment(value).unix();
+				else if (typeof property.null == 'undefined' || !property.null)
+					model[property.name] = 0;
+				else
+					model[property.name] = null;
 			break;
 			case 'password':
 				if (value.length == 0)

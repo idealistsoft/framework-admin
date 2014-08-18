@@ -6,3 +6,4 @@ Desktop.ini
 ._.DS_Store
 /build
 /node_modules
+composer.lock

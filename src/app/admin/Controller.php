@@ -53,7 +53,10 @@ class Controller
 			
 			$this->app[ 'view_engine' ]->assignData( $adminViewParams );
 
-			$req->setParams( [ 'module' => $module ] );
+			// set module param if module is not using scaffolding
+			$controller = '\\app\\' . $module . '\\Controller';
+			if( class_exists( $controller ) && property_exists( $controller, 'hasAdminView' ) )
+				$req->setParams( [ 'module' => $module ] );
 		}
 	}
 

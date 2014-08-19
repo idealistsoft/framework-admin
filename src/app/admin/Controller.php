@@ -49,6 +49,8 @@ class Controller
 				'adminViewsDir' => $this->adminViewsDir ];
 			
 			$this->app[ 'view_engine' ]->assignData( $adminViewParams );
+
+			$req->setParams( [ 'module' => $module ] );
 		}
 	}
 

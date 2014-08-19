@@ -18,12 +18,15 @@ use App;
 
 class Controller
 {
+	// NOTE we cannot use :module because it is a reserved param
+	// and would mistakenly cause routes to be loaded for the module
+	// we are scaffolding
 	public static $properties = [
 		'routes' => [
 			'get /admin' => 'index',
-			'get /admin/:module' => 'moduleIndex',
-			'get /admin/:module/:model' => 'model',
-			'get /admin/:module/:model/:id' => 'model', // not implemented
+			'get /admin/:mod' => 'moduleIndex',
+			'get /admin/:mod/:model' => 'model',
+			'get /admin/:mod/:model/:id' => 'model', // not implemented
 		],
 	];
 
@@ -101,7 +104,7 @@ class Controller
 		];
 
 		// which model are we talking about?
-		$model = $this->fetchModelInfo( $req->params( 'module' ), $req->params( 'model' ) );
+		$model = $this->fetchModelInfo( $req->params( 'mod' ), $req->params( 'model' ) );
 
 		if( !$model )
 			return $res->setCode( 404 );
@@ -200,7 +203,7 @@ class Controller
 	private function getController( $req, $res )
 	{
 		// instantiate the controller
-		$controller = '\\app\\' . $req->params( 'module' ) . '\\Controller';
+		$controller = '\\app\\' . $req->params( 'mod' ) . '\\Controller';
 		$controllerObj = new $controller( $this->app );
 
 		$properties = $controller::$properties;

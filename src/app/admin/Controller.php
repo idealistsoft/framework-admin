@@ -205,10 +205,12 @@ class Controller
 
 	private function getController( $req, $res )
 	{
-		// instantiate the controller
 		$controller = '\\app\\' . $req->params( 'mod' ) . '\\Controller';
-		$controllerObj = new $controller( $this->app );
 
+		if( !class_exists( $controller ) )
+			return SKIP_ROUTE;
+
+		$controllerObj = new $controller( $this->app );
 		$properties = $controller::$properties;
 				
 		// check if automatic admin generation enabled

@@ -19,8 +19,8 @@ use App;
 class Controller
 {
 	// NOTE we cannot use :module because it is a reserved param
-	// and would mistakenly cause routes to be loaded for the module
-	// we are scaffolding
+	// and would mistakenly cause routes to be loaded for the module we are scaffolding,
+	// so we use :mod instead
 	public static $properties = [
 		'routes' => [
 			'get /admin' => 'index',
@@ -136,12 +136,8 @@ class Controller
 			'mutable' => true
 		];		
 	
-		foreach( $modelClassName::$properties as $name => $property )
+		foreach( $modelClassName::properties() as $name => $property )
 		{
-			// id properties are immutable by default
-			if( !isset( $property[ 'mutable' ] ) && $modelClassName::isIdProperty( $name ) )
-				$property[ 'mutable' ] = false;
-
 			$modelInfo[ 'properties' ][] = array_merge(
 				$default,
 				[
@@ -256,7 +252,7 @@ class Controller
 		$controllerObj = new $controller( $this->app );
 
 		// get info about the controller
-		$properties = $controller::$properties;
+		$properties = $controller::properties();
 
 		// fetch all available models from the controller
 		$availableModels = $this->models( $controllerObj );

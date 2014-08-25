@@ -252,7 +252,7 @@ class Controller
 		$controllerObj = new $controller( $this->app );
 
 		// get info about the controller
-		$properties = $controller::properties;
+		$properties = $controller::$properties;
 
 		// fetch all available models from the controller
 		$availableModels = $this->models( $controllerObj );

@@ -3,7 +3,7 @@ module.exports = function(grunt) {
   grunt.initConfig({
     ngtemplates: {
       models: {
-        cwd: "src/",
+        cwd: "assets/",
         src: "ngTemplates/**/*.html",
         dest: "templates.js",
         options: {
@@ -27,10 +27,10 @@ module.exports = function(grunt) {
           separator: ';'
         },
         src: [
-          'src/js/**/*.js',
+          'assets/js/**/*.js',
           'templates.js'
         ],
-        dest: 'js/admin.js'
+        dest: 'public/js/admin.js'
       },
     },
     uglify: {
@@ -39,14 +39,14 @@ module.exports = function(grunt) {
       },
       js: {
         files: {
-          'js/admin.min.js': 'js/admin.js',
+          'public/js/admin.min.js': 'public/js/admin.js',
         }
       }
     },
     less: {
       style: {
         files: {
-          "css/admin.css": "src/css/admin.less"
+          "public/css/admin.css": "assets/css/admin.less"
         }
       }
     },
@@ -55,7 +55,7 @@ module.exports = function(grunt) {
         expand: true,
         cwd: 'css/',
         files: {
-          'css/admin.min.css': ['css/admin.css']
+          'public/css/admin.min.css': ['public/css/admin.css']
         }
       }
     }

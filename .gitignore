@@ -7,3 +7,4 @@ Desktop.ini
 /build
 /node_modules
 composer.lock
+templates.js

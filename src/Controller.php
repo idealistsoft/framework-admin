@@ -205,7 +205,10 @@ class Controller
 
             return SKIP_ROUTE;
 
-        $controllerObj = new $controller( $this->app );
+        $controllerObj = new $controller;
+        if (method_exists($controllerObj, 'injectApp'))
+            $controllerObj->injectApp($this->app);
+        
         $properties = $controller::$properties;
 
         // check if automatic admin generation enabled

@@ -14,11 +14,9 @@ namespace app\admin;
 use infuse\Inflector;
 use infuse\Util;
 
-use InjectApp;
-
 class Controller
 {
-    use InjectApp;
+    use \InjectApp;
     
     // NOTE we cannot use :module because it is a reserved param
     // and would mistakenly cause routes to be loaded for the module we are scaffolding,

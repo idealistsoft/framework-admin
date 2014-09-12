@@ -224,7 +224,7 @@ class Controller
         // must have permission to view admin section
         if( !$this->app[ 'user' ]->isAdmin() )
 
-            return $res->setCode( 403 );
+            return $res->setCode( 404 );
 
         return $controllerObj;
     }

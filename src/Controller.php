@@ -12,7 +12,7 @@
 namespace app\admin;
 
 use infuse\Inflector;
-use infuse\Util;
+use infuse\Utility as U;
 
 class Controller
 {
@@ -144,7 +144,7 @@ class Controller
                     'title' => Inflector::titleize( $name ) ],
                 $property );
 
-            if( !Util::array_value( $property, 'admin_hidden_property' ) )
+            if( !U::array_value( $property, 'admin_hidden_property' ) )
                 $modelInfo[ 'visibleProperties' ][] = array_merge(
                     $default,
                     [
@@ -270,14 +270,14 @@ class Controller
 
                 return reset( $availableModels );
             else
-                $model = Util::array_value( $properties, 'defaultModel' );
+                $model = U::array_value( $properties, 'defaultModel' );
         }
 
         // convert the route name to the pluralized name
         $modelName = Inflector::singularize( Inflector::camelize( $model ) );
 
         // attempt to fetch the model info
-        return Util::array_value( $availableModels, $modelName );
+        return U::array_value( $availableModels, $modelName );
     }
 
     /**
@@ -294,7 +294,7 @@ class Controller
 
         $models = [];
 
-        foreach ( (array) Util::array_value( $properties, 'models' ) as $model ) {
+        foreach ( (array) U::array_value( $properties, 'models' ) as $model ) {
             $modelClassName = '\\app\\' . $module . '\\models\\' . $model;
 
             $info = $modelClassName::metadata();

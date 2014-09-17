@@ -1,6 +1,20 @@
 angular.module('models').run(['$templateCache', function($templateCache) {
   'use strict';
 
+  $templateCache.put('/templates/admin/deleteModalAsk.html',
+    "<div class=modal-header>\n" +
+    "    <h3 class=modal-title>Are you sure?</h3>\n" +
+    "</div>\n" +
+    "<div class=modal-body>\n" +
+    "\t<p>Are you sure you want to delete this {{modelInfo.proper_name}}?</p>\n" +
+    "</div>\n" +
+    "<div class=modal-footer>\n" +
+    "\t<button class=\"btn btn-default cancel\" ng-click=cancel()>No</button>\n" +
+    "\t<button class=\"btn btn-danger\" ng-click=ok()>Yes</button>\n" +
+    "</div>"
+  );
+
+
   $templateCache.put('/templates/admin/editModel.html',
     "<h2 ng-show=newModel>New {{modelInfo.proper_name}}</h2>\n" +
     "<div ng-hide=newModel>\n" +
@@ -98,23 +112,6 @@ angular.module('models').run(['$templateCache', function($templateCache) {
     "\t\t\t\t<div class=\"col-md-10 form-control-static\">\n" +
     "\t\t\t\t\t<div class=value ng-bind-html=model|modelValue:modelInfo.properties:property:false></div>\n" +
     "\t\t\t\t</div>\n" +
-    "\t\t\t</div>\n" +
-    "\t\t</div>\n" +
-    "\t</div>\n" +
-    "</div>\n" +
-    "\n" +
-    "<div class=\"modal fade\" modal=deleteModel close=closeDeleteModal() opts=dialogOptions>\n" +
-    "\t<div class=modal-dialog>\n" +
-    "\t\t<div class=modal-content>\n" +
-    "\t\t\t<div class=modal-header>\n" +
-    "\t\t\t\t<h3>Are you sure?</h3>\n" +
-    "\t\t\t</div>\n" +
-    "\t\t\t<div class=modal-body>\n" +
-    "\t\t\t\t<p>Are you sure you want to delete this {{modelInfo.proper_name}}?</p>\n" +
-    "\t\t\t</div>\n" +
-    "\t\t\t<div class=modal-footer>\n" +
-    "\t\t\t\t<button class=\"btn btn-default cancel\" ng-click=closeDeleteModal()>No</button>\n" +
-    "\t\t\t\t<button class=\"btn btn-danger\" ng-click=deleteModelConfirm()>Yes</button>\n" +
     "\t\t\t</div>\n" +
     "\t\t</div>\n" +
     "\t</div>\n" +
@@ -363,20 +360,7 @@ angular.module('models').run(['$templateCache', function($templateCache) {
     "</div>\n" +
     "<div class=loading ng-show=loading>\n" +
     "\t<img src=/img/ajax-loader.gif>\n" +
-    "</div>\n" +
-    "\n" +
-    "<script type=text/ng-template id=deleteModalAsk.html>\n" +
-    "    <div class=\"modal-header\">\n" +
-    "        <h3 class=\"modal-title\">Are you sure?</h3>\n" +
-    "    </div>\n" +
-    "    <div class=\"modal-body\">\n" +
-    "\t\t<p>Are you sure you want to delete this {{modelInfo.proper_name}}?</p>\n" +
-    "    </div>\n" +
-    "    <div class=\"modal-footer\">\n" +
-    "\t\t<button class=\"btn btn-default cancel\" ng-click=\"cancel()\">No</button>\n" +
-    "\t\t<button class=\"btn btn-danger\" ng-click=\"ok()\">Yes</button>\n" +
-    "    </div>\n" +
-    "</script>"
+    "</div>"
   );
 
 }]);

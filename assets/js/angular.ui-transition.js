@@ -1,4 +1,3 @@
-if (typeof angular != 'undefined') {
 angular.module('ui.bootstrap.transition', [])
 
 /**
@@ -81,4 +80,3 @@ angular.module('ui.bootstrap.transition', [])
   $transition.animationEndEventName = findEndEventName(animationEndEventNames);
   return $transition;
 }]);
-}

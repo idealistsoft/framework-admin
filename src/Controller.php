@@ -13,6 +13,7 @@ namespace app\admin;
 
 use infuse\Inflector;
 use infuse\Utility as U;
+use infuse\View;
 
 class Controller
 {
@@ -48,7 +49,7 @@ class Controller
                 'title' => Inflector::titleize( $module ),
                 'adminViewsDir' => $this->adminViewsDir ];
 
-            $this->app[ 'view_engine' ]->assignData( $adminViewParams );
+            $this->app[ 'view_engine' ]->setGlobalParameters($adminViewParams);
 
             // set module param if module is not using scaffolding
             $controller = '\\app\\' . $module . '\\Controller';
@@ -156,7 +157,7 @@ class Controller
         $params[ 'modelJSON' ] = json_encode( $modelInfo );
         $params[ 'ngApp' ] = 'models';
 
-        $res->render( $this->adminViewsDir . 'model', $params );
+        return new View($this->adminViewsDir . 'model', $params);
     }
 
     /////////////////////////

@@ -1,11 +1,11 @@
 <?php
 
 /**
- * @package infuse\framework
+ * @package framework-admin
  * @author Jared King <j@jaredtking.com>
  * @link http://jaredtking.com
- * @version 0.1.16
- * @copyright 2013 Jared King
+ * @version 1.0.0
+ * @copyright 2014 Jared King
  * @license MIT
  */
 
@@ -165,12 +165,12 @@ class Controller
     /////////////////////////
 
     /**
-	 * Returns a list of modules with admin sections
-	 *
-	 * @param array $modules input modules
-	 *
-	 * @return array admin-enabled modules
-	 */
+     * Returns a list of modules with admin sections
+     *
+     * @param array $modules input modules
+     *
+     * @return array admin-enabled modules
+     */
     private function adminModules()
     {
         $return = [];
@@ -217,26 +217,22 @@ class Controller
 
             return SKIP_ROUTE;
 
-        // html only
-        if( !$req->isHtml() )
-
-            return $res->setCode( 406 );
-
         // must have permission to view admin section
-        if( !$this->app[ 'user' ]->isAdmin() )
-
-            return $res->setCode( 404 );
+        if (!$this->app[ 'user' ]->isAdmin()) {
+            $res->redirect('/login?redir=' . urlencode($req->basePath() . $req->path()));
+            return false;
+        }
 
         return $controllerObj;
     }
 
     /**
-	 * Computes the name for a given controller
-	 *
-	 * @param object $controller
-	 *
-	 * @return string
-	 */
+     * Computes the name for a given controller
+     *
+     * @param object $controller
+     *
+     * @return string
+     */
     private function name($controller)
     {
         // compute module name
@@ -246,12 +242,12 @@ class Controller
     }
 
     /**
-	 * Takes the pluralized model name from the route and gets info about the model
-	 *
-	 * @param string $modelRouteName the name that comes from the route (i.e. the route "/users" would supply "users")
-	 *
-	 * @return array|null model info
-	 */
+     * Takes the pluralized model name from the route and gets info about the model
+     *
+     * @param string $modelRouteName the name that comes from the route (i.e. the route "/users" would supply "users")
+     *
+     * @return array|null model info
+     */
     private function fetchModelInfo($module, $model = false)
     {
         // instantiate the controller
@@ -282,12 +278,12 @@ class Controller
     }
 
     /**
-	 * Fetches the models for a given controller
-	 *
-	 * @param object $controller
-	 *
-	 * @return array
-	 */
+     * Fetches the models for a given controller
+     *
+     * @param object $controller
+     *
+     * @return array
+     */
     private function models($controller)
     {
         $properties = $controller::$properties;

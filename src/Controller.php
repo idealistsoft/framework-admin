@@ -11,14 +11,14 @@
 
 namespace app\admin;
 
-use infuse\Inflector;
+use ICanBoogie\Inflector;
 use infuse\Utility as U;
 use infuse\View;
 
 class Controller
 {
     use \InjectApp;
-    
+
     // NOTE we cannot use :module because it is a reserved param
     // and would mistakenly cause routes to be loaded for the module we are scaffolding,
     // so we use :mod instead
@@ -46,7 +46,7 @@ class Controller
             $adminViewParams = [
                 'modulesWithAdmin' => $this->adminModules(),
                 'selectedModule' => $module,
-                'title' => Inflector::titleize( $module ),
+                'title' => Inflector::get()->titleize($module),
                 'adminViewsDir' => $this->adminViewsDir ];
 
             $this->app[ 'view_engine' ]->setGlobalParameters($adminViewParams);
@@ -137,12 +137,13 @@ class Controller
             'mutable' => true
         ];
 
+        $inflector = Inflector::get();
         foreach ( $modelClassName::properties() as $name => $property ) {
             $modelInfo[ 'properties' ][] = array_merge(
                 $default,
                 [
                     'name' => $name,
-                    'title' => Inflector::titleize( $name ) ],
+                    'title' => $inflector->titleize($name) ],
                 $property );
 
             if( !U::array_value( $property, 'admin_hidden_property' ) )
@@ -150,7 +151,7 @@ class Controller
                     $default,
                     [
                         'name' => $name,
-                        'title' => Inflector::titleize( $name ) ],
+                        'title' => $inflector->titleize($name) ],
                     $property );
         }
 
@@ -186,7 +187,7 @@ class Controller
             {
                 $moduleInfo = [
                     'name' => $module,
-                    'title' => Inflector::titleize( $module ) ];
+                    'title' => Inflector::get()->titleize($module) ];
 
                 if( property_exists( $controller, 'properties' ) )
                     $moduleInfo = array_replace( $moduleInfo, $controller::$properties );
@@ -206,10 +207,10 @@ class Controller
 
             return SKIP_ROUTE;
 
-        $controllerObj = new $controller;
+        $controllerObj = new $controller();
         if (method_exists($controllerObj, 'injectApp'))
             $controllerObj->injectApp($this->app);
-        
+
         $properties = $controller::$properties;
 
         // check if automatic admin generation enabled
@@ -220,6 +221,7 @@ class Controller
         // must have permission to view admin section
         if (!$this->app[ 'user' ]->isAdmin()) {
             $res->redirect('/login?redir=' . urlencode($req->basePath() . $req->path()));
+
             return false;
         }
 
@@ -271,7 +273,8 @@ class Controller
         }
 
         // convert the route name to the pluralized name
-        $modelName = Inflector::singularize( Inflector::camelize( $model ) );
+        $inflector = Inflector::get();
+        $modelName = $inflector->singularize($inflector->camelize($model));
 
         // attempt to fetch the model info
         return U::array_value( $availableModels, $modelName );

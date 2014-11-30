@@ -35,98 +35,102 @@ class Controller
 
     public function __construct()
     {
-        $this->adminViewsDir = __DIR__ . '/views/';
+        $this->adminViewsDir = __DIR__.'/views/';
     }
 
     public function middleware($req, $res)
     {
-        if ( $req->paths( 0 ) == 'admin' ) {
+        if ($req->paths(0) == 'admin') {
             // inject variables useful for admin views
-            $module = $req->paths( 1 );
+            $module = $req->paths(1);
             $adminViewParams = [
                 'modulesWithAdmin' => $this->adminModules(),
                 'selectedModule' => $module,
                 'title' => Inflector::get()->titleize($module),
-                'adminViewsDir' => $this->adminViewsDir ];
+                'adminViewsDir' => $this->adminViewsDir, ];
 
             $this->app[ 'view_engine' ]->setGlobalParameters($adminViewParams);
 
             // set module param if module is not using scaffolding
-            $controller = '\\app\\' . $module . '\\Controller';
-            if( class_exists( $controller ) && property_exists( $controller, 'hasAdminView' ) )
-                $req->setParams( [ 'module' => $module ] );
+            $controller = '\\app\\'.$module.'\\Controller';
+            if (class_exists($controller) && property_exists($controller, 'hasAdminView')) {
+                $req->setParams([ 'module' => $module ]);
+            }
         }
     }
 
     public function index($req, $res)
     {
-        $res->redirect( '/admin/' . $this->app[ 'config' ]->get( 'admin.index' ) );
+        $res->redirect('/admin/'.$this->app[ 'config' ]->get('admin.index'));
     }
 
     public function moduleIndex($req, $res)
     {
-        $controller = $this->getController( $req, $res );
+        $controller = $this->getController($req, $res);
 
-        if( !is_object( $controller ) )
-
+        if (!is_object($controller)) {
             return $controller;
+        }
 
         $properties = $controller::$properties;
-        $properties[ 'name' ] = $this->name( $controller );
+        $properties[ 'name' ] = $this->name($controller);
 
-        $models = $this->models( $controller );
+        $models = $this->models($controller);
 
         // redirect if a model was not specified
         $defaultModel = false;
 
-        if( isset( $properties[ 'defaultModel' ] ) )
+        if (isset($properties[ 'defaultModel' ])) {
             $defaultModel = $properties[ 'defaultModel' ];
+        }
 
-        if( count( $models ) > 0 )
-            $defaultModel = reset( $models );
+        if (count($models) > 0) {
+            $defaultModel = reset($models);
+        }
 
-        if( $defaultModel )
-            $res->redirect( '/admin/' . $properties[ 'name' ] . '/' . $defaultModel[ 'model' ] );
-        else
+        if ($defaultModel) {
+            $res->redirect('/admin/'.$properties[ 'name' ].'/'.$defaultModel[ 'model' ]);
+        } else {
             return SKIP_ROUTE;
+        }
     }
 
     public function model($req, $res)
     {
         // find the controller we need
-        $controller = $this->getController( $req, $res );
+        $controller = $this->getController($req, $res);
 
-        if( !is_object( $controller ) )
-
+        if (!is_object($controller)) {
             return $controller;
+        }
 
         // fetch some basic parameters we want to pass to the view
         $params = [
-            'moduleName' => $this->name( $controller ),
-            'models' => $this->models( $controller )
+            'moduleName' => $this->name($controller),
+            'models' => $this->models($controller),
         ];
 
         // which model are we talking about?
-        $model = $this->fetchModelInfo( $req->params( 'mod' ), $req->params( 'model' ) );
+        $model = $this->fetchModelInfo($req->params('mod'), $req->params('model'));
 
-        if( !$model )
-
-            return $res->setCode( 404 );
+        if (!$model) {
+            return $res->setCode(404);
+        }
 
         $modelClassName = $model[ 'class_name' ];
         $modelObj = new $modelClassName();
 
         $user = $this->app[ 'user' ];
 
-        $modelInfo = array_replace( $model, [
+        $modelInfo = array_replace($model, [
             'permissions' => [
-                'create' => $modelObj->can( 'create', $user ),
-                'edit' => $modelObj->can( 'edit', $user ),
-                'delete' => $modelObj->can( 'delete', $user ) ],
+                'create' => $modelObj->can('create', $user),
+                'edit' => $modelObj->can('edit', $user),
+                'delete' => $modelObj->can('delete', $user), ],
             'idProperty' => $modelClassName::idProperty(),
             'properties' => [],
             'visibleProperties' => []
-        ] );
+        ]);
         $params[ 'modelInfo' ] = $modelInfo;
 
         $default = [
@@ -134,31 +138,32 @@ class Controller
             'admin_hidden_property' => false,
             'admin_truncate' => true,
             'admin_nowrap' => true,
-            'mutable' => true
+            'mutable' => true,
         ];
 
         $inflector = Inflector::get();
-        foreach ( $modelClassName::properties() as $name => $property ) {
+        foreach ($modelClassName::properties() as $name => $property) {
             $modelInfo[ 'properties' ][] = array_merge(
                 $default,
                 [
                     'name' => $name,
                     'title' => $inflector->titleize($name) ],
-                $property );
+                $property);
 
-            if( !U::array_value( $property, 'admin_hidden_property' ) )
+            if (!U::array_value($property, 'admin_hidden_property')) {
                 $modelInfo[ 'visibleProperties' ][] = array_merge(
                     $default,
                     [
                         'name' => $name,
                         'title' => $inflector->titleize($name) ],
-                    $property );
+                    $property);
+            }
         }
 
-        $params[ 'modelJSON' ] = json_encode( $modelInfo );
+        $params[ 'modelJSON' ] = json_encode($modelInfo);
         $params[ 'ngApp' ] = 'models';
 
-        return new View($this->adminViewsDir . 'model', $params);
+        return new View($this->adminViewsDir.'model', $params);
     }
 
     /////////////////////////
@@ -176,21 +181,22 @@ class Controller
     {
         $return = [];
 
-        foreach ( $this->app[ 'config' ]->get( 'modules.all' ) as $module ) {
-            $controller = '\\app\\' . $module . '\\Controller';
+        foreach ($this->app[ 'config' ]->get('modules.all') as $module) {
+            $controller = '\\app\\'.$module.'\\Controller';
 
-            if( !class_exists( $controller ) )
+            if (!class_exists($controller)) {
                 continue;
+            }
 
-            if( property_exists( $controller, 'scaffoldAdmin' ) ||
-                property_exists( $controller, 'hasAdminView' ) )
-            {
+            if (property_exists($controller, 'scaffoldAdmin') ||
+                property_exists($controller, 'hasAdminView')) {
                 $moduleInfo = [
                     'name' => $module,
-                    'title' => Inflector::get()->titleize($module) ];
+                    'title' => Inflector::get()->titleize($module), ];
 
-                if( property_exists( $controller, 'properties' ) )
-                    $moduleInfo = array_replace( $moduleInfo, $controller::$properties );
+                if (property_exists($controller, 'properties')) {
+                    $moduleInfo = array_replace($moduleInfo, $controller::$properties);
+                }
 
                 $return[] = $moduleInfo;
             }
@@ -201,26 +207,27 @@ class Controller
 
     private function getController($req, $res)
     {
-        $controller = '\\app\\' . $req->params( 'mod' ) . '\\Controller';
+        $controller = '\\app\\'.$req->params('mod').'\\Controller';
 
-        if( !class_exists( $controller ) )
-
+        if (!class_exists($controller)) {
             return SKIP_ROUTE;
+        }
 
         $controllerObj = new $controller();
-        if (method_exists($controllerObj, 'injectApp'))
+        if (method_exists($controllerObj, 'injectApp')) {
             $controllerObj->injectApp($this->app);
+        }
 
         $properties = $controller::$properties;
 
         // check if automatic admin generation enabled
-        if( !property_exists( $controller, 'scaffoldAdmin' ) )
-
+        if (!property_exists($controller, 'scaffoldAdmin')) {
             return SKIP_ROUTE;
+        }
 
         // must have permission to view admin section
         if (!$this->app[ 'user' ]->isAdmin()) {
-            $res->redirect('/login?redir=' . urlencode($req->basePath() . $req->path()));
+            $res->redirect('/login?redir='.urlencode($req->basePath().$req->path()));
 
             return false;
         }
@@ -238,7 +245,7 @@ class Controller
     private function name($controller)
     {
         // compute module name
-        $parts = explode( '\\', get_class( $controller ) );
+        $parts = explode('\\', get_class($controller));
 
         return $parts[ 1 ];
     }
@@ -253,23 +260,23 @@ class Controller
     private function fetchModelInfo($module, $model = false)
     {
         // instantiate the controller
-        $controller = '\\app\\' . $module . '\\Controller';
-        $controllerObj = new $controller( $this->app );
+        $controller = '\\app\\'.$module.'\\Controller';
+        $controllerObj = new $controller($this->app);
 
         // get info about the controller
         $properties = $controller::$properties;
 
         // fetch all available models from the controller
-        $availableModels = $this->models( $controllerObj );
+        $availableModels = $this->models($controllerObj);
 
         // look for a default model
         if (!$model) {
             // when there is only one choice, use it
-            if( count( $availableModels ) == 1 )
-
-                return reset( $availableModels );
-            else
-                $model = U::array_value( $properties, 'defaultModel' );
+            if (count($availableModels) == 1) {
+                return reset($availableModels);
+            } else {
+                $model = U::array_value($properties, 'defaultModel');
+            }
         }
 
         // convert the route name to the pluralized name
@@ -277,7 +284,7 @@ class Controller
         $modelName = $inflector->singularize($inflector->camelize($model));
 
         // attempt to fetch the model info
-        return U::array_value( $availableModels, $modelName );
+        return U::array_value($availableModels, $modelName);
     }
 
     /**
@@ -290,17 +297,17 @@ class Controller
     private function models($controller)
     {
         $properties = $controller::$properties;
-        $module = $this->name( $controller );
+        $module = $this->name($controller);
 
         $models = [];
 
-        foreach ( (array) U::array_value( $properties, 'models' ) as $model ) {
-            $modelClassName = '\\app\\' . $module . '\\models\\' . $model;
+        foreach ((array) U::array_value($properties, 'models') as $model) {
+            $modelClassName = '\\app\\'.$module.'\\models\\'.$model;
 
             $info = $modelClassName::metadata();
 
-            $models[ $model ] = array_replace( $info, [
-                'route_base' => '/' . $module . '/' . $info[ 'plural_key' ] ] );
+            $models[ $model ] = array_replace($info, [
+                'route_base' => '/'.$module.'/'.$info[ 'plural_key' ] ]);
         }
 
         return $models;

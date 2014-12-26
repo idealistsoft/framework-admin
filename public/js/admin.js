@@ -138,6 +138,8 @@ app.filter('modelValue', function() {
 	};
 });
 
+/* Controllers */
+
 var ModelCntl = ['$scope', '$routeParams', '$location', '$modal', 'Model',
 	function($scope, $routeParams, $location, $modal, Model) {
 		
@@ -154,6 +156,9 @@ var ModelCntl = ['$scope', '$routeParams', '$location', '$modal', 'Model',
 		$scope.filter = {};
 		$scope.hasFilter = {};
 		$scope.visibleProperties = {};
+		$scope.datepickerOptions = {
+			dateFormat: 'M d, yy'
+		};
 		// O(N^2)...
 		for (var i in $scope.modelInfo.properties) {
 			var property = $scope.modelInfo.properties[i].name;
@@ -381,14 +386,16 @@ var ModelCntl = ['$scope', '$routeParams', '$location', '$modal', 'Model',
 			Model.delete({
 				modelId: $scope.deleteModel.id
 			}, function(result) {
-				if (result.success) {
+				if (result.error) {
+	    			$scope.errors = result.error;
+				} else {
 					if ($routeParams.id)
 						$location.path('/');
 					else
 						$scope.loadModels(true);
-				} else if (result.error && result.error instanceof Array) {
-	    			$scope.errors = result.error;
-	    		}
+				}
+			}, function(result) {
+				// TODO handle 401 and 403 errors
 			});
 			
 			$scope.deleteModel = false;
@@ -488,6 +495,8 @@ var DeleteModalCntl = ['$scope','$modalInstance','modelInfo',
 	};
 }];
 
+/* Helper Functions */
+
 function nl2br(input) {
 	return (input + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1<br />$2');
 }
@@ -521,7 +530,7 @@ function parseModelValue (model, property, truncate) {
 	break;
 	case 'datepicker':
 		if (value != null)
-			value = moment(value).format("M/D/YYYY h:mm a");
+			value = moment(value).format("MMM D, YYYY h:mm a");
 	break;
 	case 'enum':
 		if (property.admin_enum)
@@ -1485,7 +1494,7 @@ c="string":"[object Number]"==Object.prototype.toString.call(a)&&(c="number");b.
     "\t\t\t\t\t\t\t<input type=checkbox class=checkbox value=1 name={{property.name}} ng-model=model[property.name]>\n" +
     "\t\t\t\t\t\t</div>\n" +
     "\t\t\t\t\t\t<div ng-switch-when=datepicker>\n" +
-    "\t\t\t\t\t\t\t<input name={{property.name}} class=\"form-control date\" ui-date ng-model=model[property.name]>\n" +
+    "\t\t\t\t\t\t\t<input name={{property.name}} class=\"form-control date\" ui-date=datepickerOptions ng-model=model[property.name]>\n" +
     "\t\t\t\t\t\t</div>\n" +
     "\t\t\t\t\t\t<div ng-switch-when=enum>\n" +
     "\t\t\t\t\t\t\t<select class=form-control name={{property.name}} ng-options=\"key as value for (key,value) in property.admin_enum\" ng-model=model[property.name]></select>\n" +

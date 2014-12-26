@@ -46,7 +46,7 @@ angular.module('models').run(['$templateCache', function($templateCache) {
     "\t\t\t\t\t\t\t<input type=checkbox class=checkbox value=1 name={{property.name}} ng-model=model[property.name]>\n" +
     "\t\t\t\t\t\t</div>\n" +
     "\t\t\t\t\t\t<div ng-switch-when=datepicker>\n" +
-    "\t\t\t\t\t\t\t<input name={{property.name}} class=\"form-control date\" ui-date ng-model=model[property.name]>\n" +
+    "\t\t\t\t\t\t\t<input name={{property.name}} class=\"form-control date\" ui-date=datepickerOptions ng-model=model[property.name]>\n" +
     "\t\t\t\t\t\t</div>\n" +
     "\t\t\t\t\t\t<div ng-switch-when=enum>\n" +
     "\t\t\t\t\t\t\t<select class=form-control name={{property.name}} ng-options=\"key as value for (key,value) in property.admin_enum\" ng-model=model[property.name]></select>\n" +

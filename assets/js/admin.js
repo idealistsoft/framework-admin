@@ -138,6 +138,8 @@ app.filter('modelValue', function() {
 	};
 });
 
+/* Controllers */
+
 var ModelCntl = ['$scope', '$routeParams', '$location', '$modal', 'Model',
 	function($scope, $routeParams, $location, $modal, Model) {
 		
@@ -154,6 +156,9 @@ var ModelCntl = ['$scope', '$routeParams', '$location', '$modal', 'Model',
 		$scope.filter = {};
 		$scope.hasFilter = {};
 		$scope.visibleProperties = {};
+		$scope.datepickerOptions = {
+			dateFormat: 'M d, yy'
+		};
 		// O(N^2)...
 		for (var i in $scope.modelInfo.properties) {
 			var property = $scope.modelInfo.properties[i].name;
@@ -489,6 +494,8 @@ var DeleteModalCntl = ['$scope','$modalInstance','modelInfo',
 		$modalInstance.dismiss('cancel');
 	};
 }];
+
+/* Helper Functions */
 
 function nl2br(input) {
 	return (input + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1<br />$2');

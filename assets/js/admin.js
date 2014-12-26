@@ -381,14 +381,16 @@ var ModelCntl = ['$scope', '$routeParams', '$location', '$modal', 'Model',
 			Model.delete({
 				modelId: $scope.deleteModel.id
 			}, function(result) {
-				if (result.success) {
+				if (result.error) {
+	    			$scope.errors = result.error;
+				} else {
 					if ($routeParams.id)
 						$location.path('/');
 					else
 						$scope.loadModels(true);
-				} else if (result.error && result.error instanceof Array) {
-	    			$scope.errors = result.error;
-	    		}
+				}
+			}, function(result) {
+				// TODO handle 401 and 403 errors
 			});
 			
 			$scope.deleteModel = false;
@@ -521,7 +523,7 @@ function parseModelValue (model, property, truncate) {
 	break;
 	case 'datepicker':
 		if (value != null)
-			value = moment(value).format("M/D/YYYY h:mm a");
+			value = moment(value).format("MMM D, YYYY h:mm a");
 	break;
 	case 'enum':
 		if (property.admin_enum)

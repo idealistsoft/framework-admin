@@ -8,7 +8,11 @@ Admin module for Infuse Framework
 
 ## Installation
 
-1. Add the composer package in the require section of your app's `composer.json` and run `composer update`
+1. Install the package with [composer](http://getcomposer.org):
+
+```
+composer require infuse/admin
+```
 
 2. Copy the CSS and JS files into the `public` directory. If you use the minified versions, be sure they are renamed to `css/admin.css` and `js/admin.js`.
 

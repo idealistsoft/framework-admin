@@ -1,11 +1,11 @@
-framework-admin [![Build Status](https://travis-ci.org/idealistsoft/framework-admin.png?branch=master)](https://travis-ci.org/idealistsoft/framework-admin)
+admin [![Build Status](https://travis-ci.org/infusephp/admin.png?branch=master)](https://travis-ci.org/infusephp/admin)
 ===============
 
-[![Coverage Status](https://coveralls.io/repos/idealistsoft/framework-admin/badge.png)](https://coveralls.io/r/idealistsoft/framework-admin)
-[![Latest Stable Version](https://poser.pugx.org/idealistsoft/framework-admin/v/stable.png)](https://packagist.org/packages/idealistsoft/framework-admin)
-[![Total Downloads](https://poser.pugx.org/idealistsoft/framework-admin/downloads.png)](https://packagist.org/packages/idealistsoft/framework-admin)
+[![Coverage Status](https://coveralls.io/repos/infusephp/admin/badge.png)](https://coveralls.io/r/infusephp/admin)
+[![Latest Stable Version](https://poser.pugx.org/infusephp/admin/v/stable.png)](https://packagist.org/packages/infusephp/admin)
+[![Total Downloads](https://poser.pugx.org/infusephp/admin/downloads.png)](https://packagist.org/packages/infusephp/admin)
 
-Admin module for Idealist Framework
+Admin module for Infuse Framework
 
 ## Installation
 

@@ -1,5 +1,5 @@
 {
-  "name": "framework-admin",
+  "name": "infuse/admin",
   "devDependencies": {
     "grunt-cli": "latest",
     "grunt-contrib-concat": "latest",

@@ -1,7 +1,6 @@
 admin
 ===============
 
-[![Coverage Status](https://coveralls.io/repos/infusephp/admin/badge.png)](https://coveralls.io/r/infusephp/admin)
 [![Latest Stable Version](https://poser.pugx.org/infuse/admin/v/stable.png)](https://packagist.org/packages/infuse/admin)
 [![Total Downloads](https://poser.pugx.org/infuse/admin/downloads.png)](https://packagist.org/packages/infuse/admin)
 

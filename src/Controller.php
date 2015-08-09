@@ -1,10 +1,12 @@
 <?php
 
 /**
- * @package framework-admin
  * @author Jared King <j@jaredtking.com>
+ *
  * @link http://jaredtking.com
+ *
  * @version 1.0.0
+ *
  * @copyright 2014 Jared King
  * @license MIT
  */
@@ -19,18 +21,6 @@ class Controller
 {
     use \InjectApp;
 
-    // NOTE we cannot use :module because it is a reserved param
-    // and would mistakenly cause routes to be loaded for the module we are scaffolding,
-    // so we use :mod instead
-    public static $properties = [
-        'routes' => [
-            'get /admin' => 'index',
-            'get /admin/:mod' => 'moduleIndex',
-            'get /admin/:mod/:model' => 'model',
-            'get /admin/:mod/:model/:id' => 'model', // not implemented
-        ],
-    ];
-
     private $adminViewsDir;
 
     public function __construct()
@@ -40,6 +30,15 @@ class Controller
 
     public function middleware($req, $res)
     {
+        // add routes
+        // NOTE we cannot use :module because it is a reserved param
+        // and would mistakenly cause routes to be loaded for the module we are scaffolding,
+        // so we use :mod instead
+        $this->app->get('/admin', 'index')
+                  ->get('/admin/:mod', 'moduleIndex')
+                  ->get('/admin/:mod/:model', 'model')
+                  ->get('/admin/:mod/:model/:id', 'model');
+
         if ($req->paths(0) == 'admin') {
             // inject variables useful for admin views
             $module = $req->paths(1);
@@ -129,7 +128,7 @@ class Controller
                 'delete' => $modelObj->can('delete', $user), ],
             'idProperty' => $modelClassName::idProperty(),
             'properties' => [],
-            'visibleProperties' => []
+            'visibleProperties' => [],
         ]);
         $params[ 'modelInfo' ] = $modelInfo;
 
@@ -147,7 +146,7 @@ class Controller
                 $default,
                 [
                     'name' => $name,
-                    'title' => $inflector->titleize($name) ],
+                    'title' => $inflector->titleize($name), ],
                 $property);
 
             if (!U::array_value($property, 'admin_hidden_property')) {
@@ -155,7 +154,7 @@ class Controller
                     $default,
                     [
                         'name' => $name,
-                        'title' => $inflector->titleize($name) ],
+                        'title' => $inflector->titleize($name), ],
                     $property);
             }
         }
@@ -171,7 +170,7 @@ class Controller
     /////////////////////////
 
     /**
-     * Returns a list of modules with admin sections
+     * Returns a list of modules with admin sections.
      *
      * @param array $modules input modules
      *
@@ -236,7 +235,7 @@ class Controller
     }
 
     /**
-     * Computes the name for a given controller
+     * Computes the name for a given controller.
      *
      * @param object $controller
      *
@@ -251,7 +250,7 @@ class Controller
     }
 
     /**
-     * Takes the pluralized model name from the route and gets info about the model
+     * Takes the pluralized model name from the route and gets info about the model.
      *
      * @param string $modelRouteName the name that comes from the route (i.e. the route "/users" would supply "users")
      *
@@ -288,7 +287,7 @@ class Controller
     }
 
     /**
-     * Fetches the models for a given controller
+     * Fetches the models for a given controller.
      *
      * @param object $controller
      *
@@ -307,7 +306,7 @@ class Controller
             $info = $modelClassName::metadata();
 
             $models[ $model ] = array_replace($info, [
-                'route_base' => '/'.$module.'/'.$info[ 'plural_key' ] ]);
+                'route_base' => '/'.$module.'/'.$info[ 'plural_key' ], ]);
         }
 
         return $models;

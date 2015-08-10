@@ -34,10 +34,10 @@ class Controller
         // NOTE we cannot use :module because it is a reserved param
         // and would mistakenly cause routes to be loaded for the module we are scaffolding,
         // so we use :mod instead
-        $this->app->get('/admin', 'index')
-                  ->get('/admin/:mod', 'moduleIndex')
-                  ->get('/admin/:mod/:model', 'model')
-                  ->get('/admin/:mod/:model/:id', 'model');
+        $this->app->get('/admin', ['admin\\Controller', 'index'])
+                  ->get('/admin/:mod', ['admin\\Controller', 'moduleIndex'])
+                  ->get('/admin/:mod/:model', ['admin\\Controller', 'model'])
+                  ->get('/admin/:mod/:model/:id', ['admin\\Controller', 'model']);
 
         if ($req->paths(0) == 'admin') {
             // inject variables useful for admin views

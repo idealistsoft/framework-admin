@@ -10,12 +10,11 @@
  * @copyright 2014 Jared King
  * @license MIT
  */
-
 namespace app\admin;
 
 use ICanBoogie\Inflector;
-use infuse\Utility as U;
-use infuse\View;
+use Infuse\Utility as U;
+use Infuse\View;
 
 class Controller
 {
@@ -53,7 +52,7 @@ class Controller
             // set module param if module is not using scaffolding
             $controller = '\\app\\'.$module.'\\Controller';
             if (class_exists($controller) && property_exists($controller, 'hasAdminView')) {
-                $req->setParams([ 'module' => $module ]);
+                $req->setParams(['module' => $module]);
             }
         }
     }
